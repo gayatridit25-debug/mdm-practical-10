@@ -1,0 +1,345 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Expense Tracker</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-blue-500 via-pink-500 to-orange-500">
+
+    <!-- Main Container -->
+    <div class="max-w-3xl mx-auto px-4 py-8">
+
+        <!-- Header -->
+        <div class="text-center text-white mb-8">
+
+            <div class="text-6xl mb-3"></div>
+
+            <h1 class="text-4xl font-bold">
+                Student Expense Tracker
+            </h1>
+
+            <p class="mt-2 text-lg">
+                Track your daily expenses easily
+            </p>
+
+        </div>
+
+
+        <!-- Main Card -->
+        <div class="bg-white rounded-3xl shadow-2xl p-6">
+
+            <!-- Add Expense -->
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">
+                Add New Expense
+            </h2>
+
+            <div class="grid md:grid-cols-3 gap-3">
+
+                <input
+                    type="text"
+                    id="expenseName"
+                    placeholder="Expense name"
+                    class="border-2 border-purple-200 rounded-xl px-4 py-3
+                           focus:outline-none focus:border-purple-500"
+                >
+
+                <input
+                    type="number"
+                    id="expenseAmount"
+                    placeholder="Amount ₹"
+                    class="border-2 border-purple-200 rounded-xl px-4 py-3
+                           focus:outline-none focus:border-purple-500"
+                >
+
+                <select
+                    id="expenseCategory"
+                    class="border-2 border-purple-200 rounded-xl px-4 py-3
+                           focus:outline-none focus:border-purple-500"
+                >
+                    <option value="Food"> Food</option>
+                    <option value="Travel"> Travel</option>
+                    <option value="Study"> Study</option>
+                    <option value="Shopping"> Shopping</option>
+                    <option value="Other"> Other</option>
+                </select>
+
+            </div>
+
+
+            <!-- Add Button -->
+            <button
+                onclick="addExpense()"
+                class="w-full mt-4 bg-purple-600 hover:bg-purple-700
+                       text-white font-bold py-3 rounded-xl transition"
+            >
+                Add Expense
+            </button>
+
+
+            <!-- Summary -->
+            <div class="grid grid-cols-2 gap-4 mt-6">
+
+                <div class="bg-purple-100 rounded-2xl p-5 text-center">
+
+                    <p class="text-gray-600">
+                        Total Expenses
+                    </p>
+
+                    <p
+                        id="totalAmount"
+                        class="text-3xl font-bold text-purple-600"
+                    >
+                        ₹0
+                    </p>
+
+                </div>
+
+
+                <div class="bg-green-100 rounded-2xl p-5 text-center">
+
+                    <p class="text-gray-600">
+                        Number of Expenses
+                    </p>
+
+                    <p
+                        id="expenseCount"
+                        class="text-3xl font-bold text-green-600"
+                    >
+                        0
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Expense List -->
+            <h2 class="text-2xl font-bold text-gray-800 mt-8 mb-4">
+                Expense History
+            </h2>
+
+            <div id="expenseList" class="space-y-3">
+            </div>
+
+
+            <!-- Empty Message -->
+            <p
+                id="emptyMessage"
+                class="text-center text-gray-400 py-6"
+            >
+                No expenses added yet. 
+            </p>
+
+        </div>
+
+
+        <!-- Footer -->
+        <p class="text-center text-white mt-6">
+            Manage your money • Save smart 
+        </p>
+
+    </div>
+
+
+    <!-- JavaScript -->
+    <script>
+
+        // Store expenses
+        let expenses =
+            JSON.parse(localStorage.getItem("expenses")) || [];
+
+
+        // Add Expense
+        function addExpense() {
+
+            const name =
+                document.getElementById("expenseName").value.trim();
+
+            const amount =
+                document.getElementById("expenseAmount").value;
+
+            const category =
+                document.getElementById("expenseCategory").value;
+
+
+            // Validation
+            if (name === "" || amount === "") {
+
+                alert("Please enter expense name and amount!");
+
+                return;
+            }
+
+
+            // Create expense object
+            const expense = {
+
+                id: Date.now(),
+
+                name: name,
+
+                amount: Number(amount),
+
+                category: category
+
+            };
+
+
+            // Add to array
+            expenses.push(expense);
+
+
+            // Save data
+            localStorage.setItem(
+                "expenses",
+                JSON.stringify(expenses)
+            );
+
+
+            // Clear input
+            document.getElementById("expenseName").value = "";
+
+            document.getElementById("expenseAmount").value = "";
+
+
+            // Display expenses
+            displayExpenses();
+        }
+
+
+        // Display Expenses
+        function displayExpenses() {
+
+            const list =
+                document.getElementById("expenseList");
+
+            const emptyMessage =
+                document.getElementById("emptyMessage");
+
+
+            list.innerHTML = "";
+
+
+            // Show empty message
+            if (expenses.length === 0) {
+
+                emptyMessage.style.display = "block";
+
+            } else {
+
+                emptyMessage.style.display = "none";
+            }
+
+
+            // Display each expense
+            expenses.forEach(expense => {
+
+                const item =
+                    document.createElement("div");
+
+
+                item.className =
+                    "flex items-center justify-between " +
+                    "bg-gray-50 border rounded-xl p-4 " +
+                    "hover:shadow-md transition";
+
+
+                item.innerHTML = `
+
+                    <div>
+
+                        <h3 class="font-bold text-gray-800">
+                            ${expense.name}
+                        </h3>
+
+                        <p class="text-sm text-gray-500">
+                            ${expense.category}
+                        </p>
+
+                    </div>
+
+
+                    <div class="flex items-center gap-3">
+
+                        <span class="font-bold text-purple-600">
+                            ₹${expense.amount}
+                        </span>
+
+                        <button
+                            onclick="deleteExpense(${expense.id})"
+                            class="bg-red-500 hover:bg-red-600
+                                   text-white px-3 py-2
+                                   rounded-lg"
+                        >
+                            🗑️
+                        </button>
+
+                    </div>
+
+                `;
+
+
+                list.appendChild(item);
+
+            });
+
+
+            updateTotal();
+        }
+
+
+        // Calculate total
+        function updateTotal() {
+
+            const total =
+                expenses.reduce(
+                    (sum, expense) =>
+                    sum + expense.amount,
+                    0
+                );
+
+
+            document.getElementById("totalAmount")
+                .textContent = "₹" + total;
+
+
+            document.getElementById("expenseCount")
+                .textContent = expenses.length;
+        }
+
+
+        // Delete Expense
+        function deleteExpense(id) {
+
+            expenses =
+                expenses.filter(
+                    expense => expense.id !== id
+                );
+
+
+            localStorage.setItem(
+                "expenses",
+                JSON.stringify(expenses)
+            );
+
+
+            displayExpenses();
+        }
+
+
+        // Display saved expenses
+        displayExpenses();
+
+    </script>
+
+</body>
+
+</html>
